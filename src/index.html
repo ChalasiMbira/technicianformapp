@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #6B8DD6 100%);
+            background-size: 200% 200%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        nav {
+            background: rgba(51, 51, 51, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        nav a {
+            color: #fff;
+            margin-right: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        nav a:hover {
+            color: #a1c4fd;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #34495e;
+            font-size: 22px;
+            margin: 20px 0;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #dfe6e9;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background: #f8f9fa;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.3);
+            outline: none;
+        }
+
+        button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dfe6e9;
+            word-wrap: break-word;
+            max-width: 200px;
+        }
+
+        th {
+            background: #667eea;
+            color: #fff;
+        }
+
+        .submission-card {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .submission-card img {
+            max-width: 150px;
+            margin: 5px;
+            border-radius: 4px;
+            transition: transform 0.2s ease;
+        }
+
+        .submission-card img:hover {
+            transform: scale(1.05);
+        }
+
+        .export-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .image-converter {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        .image-preview img {
+            max-width: 200px;
+            border-radius: 6px;
+            border: 2px solid #dfe6e9;
+            transition: transform 0.2s ease;
+        }
+
+        .image-preview img:hover {
+            transform: scale(1.05);
+        }
+
+        .converter-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">Technician Form</a>
+        <a href="admin.html">Admin Dashboard</a>
+    </nav>
+
+    <div class="dashboard-container" id="loginSection">
+        <h1>Admin Login</h1>
+        <form id="adminLoginForm">
+            <label for="adminUsername">Username</label>
+            <input type="text" id="adminUsername" name="adminUsername" placeholder="Enter admin username" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <div class="dashboard-container" id="dashboardSection" style="display: none;">
+        <h1>Admin Dashboard</h1>
+
+        <!-- User Creation -->
+        <h2>Create Technician User</h2>
+        <form id="userForm">
+            <label for="userName">Name</label>
+            <input type="text" id="userName" name="userName" placeholder="Enter technician name" required>
+            <label for="userEmail">Email (Password)</label>
+            <input type="email" id="userEmail" name="userEmail" placeholder="Enter technician email" required>
+            <button type="submit">Create User</button>
+        </form>
+
+        <!-- Submissions Table -->
+        <h2>Submissions</h2>
+        <table id="submissionsTable">
+            <thead>
+                <tr>
+                    <th>Technician</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Area</th>
+                    <th>Address</th>
+                    <th>DR#</th>
+                    <th>PON</th>
+                    <th>Pole</th>
+                    <th>Zone</th>
+                    <th>Speed Test</th>
+                    <th>Comment</th>
+                    <th>Timestamp</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="submissionsBody"></tbody>
+        </table>
+
+        <!-- Export Buttons -->
+        <div class="export-buttons">
+            <button onclick="exportAllToExcel()">Export All to Excel</button>
+        </div>
+
+        <!-- Base64 to Image Converter -->
+        <div class="image-converter">
+            <h2>Convert Base64 to Images</h2>
+            <textarea id="base64Input" rows="5" placeholder="Paste Base64 string(s) here (one per line)..."></textarea>
+            <div class="converter-buttons">
+                <button onclick="convertBase64ToImages()">Convert</button>
+                <button onclick="downloadConvertedImages()">Download Images</button>
+            </div>
+            <div class="image-preview" id="imagePreview"></div>
+        </div>
+    </div>
+
+    <script>
+        let convertedImages = [];
+
+        // Admin Login
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const dashboardSection = document.getElementById('dashboardSection');
+        const loginSection = document.getElementById('loginSection');
+        adminLoginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('adminUsername').value;
+            if (username === 'admin1' || username === 'admin2') {
+                loginSection.style.display = 'none';
+                dashboardSection.style.display = 'block';
+                loadSubmissions();
+            } else {
+                alert('Invalid admin username. Use "admin1" or "admin2".');
+            }
+        });
+
+        // Create User
+        const userForm = document.getElementById('userForm');
+        userForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const users = JSON.parse(localStorage.getItem('users')) || {};
+            users[name] = { email };
+            localStorage.setItem('users', JSON.stringify(users));
+            alert(`User ${name} created with email ${email}`);
+            userForm.reset();
+        });
+
+        // Load Submissions
+        function loadSubmissions() {
+            const submissions = JSON.parse(localStorage.getItem('submissions')) || [];
+            const tbody = document.getElementById('submissionsBody');
+            tbody.innerHTML = '';
+            submissions.forEach((submission, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${submission.technicianName}</td>
+                    <td>${submission.installActivation}</td>
+                    <td>${submission.date}</td>
+                    <td>${submission.areaName}</td>
+                    <td>${submission.address}</td>
+                    <td>${submission.drNumber}</td>
+                    <td>${submission.pon}</td>
+                    <td>${submission.pole}</td>
+                    <td>${submission.zone}</td>
+                    <td>${submission.speedTest}</td>
+                    <td>${submission.comment || 'None'}</td>
+                    <td>${new Date(submission.timestamp).toLocaleString()}</td>
+                    <td>
+                        <button onclick="viewCard(${index})">View Card</button>
+                        <button onclick="exportToExcel(${index})">Export to Excel</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // View Submission as Card
+        function viewCard(index) {
+            const submissions = JSON.parse(localStorage.getItem('submissions')) || [];
+            const submission = submissions[index];
+            const card = document.createElement('div');
+            card.className = 'submission-card';
+            card.innerHTML = `
+                <p><strong>Technician:</strong> ${submission.technicianName}</p>
+                <p><strong>Type:</strong> ${submission.installActivation}</p>
+                <p><strong>Date:</strong> ${submission.date}</p>
+                <p><strong>Area:</strong> ${submission.areaName}</p>
+                <p><strong>Address:</strong> ${submission.address}</p>
+                <p><strong>DR#:</strong> ${submission.drNumber}</p>
+                <p><strong>PON:</strong> ${submission.pon}</p>
+                <p><strong>Pole:</strong> ${submission.pole}</p>
+                <p><strong>Zone:</strong> ${submission.zone}</p>
+                <p><strong>Speed Test:</strong> ${submission.speedTest}</p>
+                <p><strong>Comment:</strong> ${submission.comment || 'None'}</p>
+                <p><strong>Timestamp:</strong> ${new Date(submission.timestamp).toLocaleString()}</p>
+                <p><strong>Photos:</strong></p>
+                ${submission.photos.map(photo => `<img src="${photo.data}" alt="${photo.name}">`).join('')}
+            `;
+            document.getElementById('dashboardSection').appendChild(card);
+        }
+
+        // Export Single Submission to Excel
+        async function exportToExcel(index) {
+            const submissions = JSON.parse(localStorage.getItem('submissions')) || [];
+            const submission = submissions[index];
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet([{
+                Technician: submission.technicianName,
+                Type: submission.installActivation,
+                Date: submission.date,
+                Area: submission.areaName,
+                Address: submission.address,
+                'DR#': submission.drNumber,
+                PON: submission.pon,
+                Pole: submission.pole,
+                Zone: submission.zone,
+                'Speed Test': submission.speedTest,
+                Comment: submission.comment || 'None',
+                Timestamp: new Date(submission.timestamp).toLocaleString()
+            }]);
+
+            // Add images
+            const imagePromises = submission.photos.map(async (photo, i) => {
+                const base64Data = photo.data.split(',')[1];
+                return { base64: base64Data, name: photo.name, position: { col: 12, row: i + 1 } };
+            });
+            const images = await Promise.all(imagePromises);
+            images.forEach(img => {
+                XLSX.utils.sheet_add_image(ws, img.base64, {
+                    position: { c: img.position.col, r: img.position.row },
+                    type: 'base64',
+                    format: 'image/png'
+                });
+            });
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Submission');
+            XLSX.writeFile(wb, `submission_${index}_${submission.technicianName}.xlsx`);
+        }
+
+        // Export All Submissions to Excel
+        async function exportAllToExcel() {
+            const submissions = JSON.parse(localStorage.getItem('submissions')) || [];
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(submissions.map(submission => ({
+                Technician: submission.technicianName,
+                Type: submission.installActivation,
+                Date: submission.date,
+                Area: submission.areaName,
+                Address: submission.address,
+                'DR#': submission.drNumber,
+                PON: submission.pon,
+                Pole: submission.pole,
+                Zone: submission.zone,
+                'Speed Test': submission.speedTest,
+                Comment: submission.comment || 'None',
+                Timestamp: new Date(submission.timestamp).toLocaleString()
+            })));
+
+            // Add images
+            let rowOffset = 1;
+            for (const submission of submissions) {
+                const imagePromises = submission.photos.map(async (photo, i) => {
+                    const base64Data = photo.data.split(',')[1];
+                    return { base64: base64Data, name: photo.name, position: { col: 12, row: rowOffset + i } };
+                });
+                const images = await Promise.all(imagePromises);
+                images.forEach(img => {
+                    XLSX.utils.sheet_add_image(ws, img.base64, {
+                        position: { c: img.position.col, r: img.position.row },
+                        type: 'base64',
+                        format: 'image/png'
+                    });
+                });
+                rowOffset += submission.photos.length + 1;
+            }
+
+            XLSX.utils.book_append_sheet(wb, ws, 'All Submissions');
+            XLSX.writeFile(wb, 'all_submissions.xlsx');
+        }
+
+        // Convert Base64 to Images
+        function convertBase64ToImages() {
+            const base64Input = document.getElementById('base64Input').value.trim();
+            if (!base64Input) {
+                alert('Please enter at least one Base64 string.');
+                return;
+            }
+
+            const base64Strings = base64Input.split('\n').filter(str => str.trim());
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.innerHTML = '';
+            convertedImages = [];
+
+            base64Strings.forEach((base64String, index) => {
+                try {
+                    const cleanBase64 = base64String.split(',')[1] || base64String; // Handle "data:image/..." prefix
+                    const imgSrc = `data:image/png;base64,${cleanBase64}`;
+                    const img = document.createElement('img');
+                    img.src = imgSrc;
+                    img.alt = `Converted Image ${index + 1}`;
+                    imagePreview.appendChild(img);
+                    convertedImages.push({ src: imgSrc, name: `converted_image_${index + 1}.png` });
+                } catch (e) {
+                    alert(`Invalid Base64 string at line ${index + 1}`);
+                }
+            });
+        }
+
+        // Download Converted Images
+        function downloadConvertedImages() {
+            if (convertedImages.length === 0) {
+                alert('No images to download. Convert Base64 strings first.');
+                return;
+            }
+
+            convertedImages.forEach((image, index) => {
+                const a = document.createElement('a');
+                a.href = image.src;
+                a.download = image.name;
+                a.click();
+            });
+        }
+    </script>
+</body>
+</html>
